@@ -1,10 +1,16 @@
 from pyspark import SparkContext, SparkConf
+from pyspark.sql import SparkSession
 
 conf = SparkConf().setAppName('first spark').setMaster("spark://6a125a083996:7077")
 sc = SparkContext(conf=conf)
 
+spark = SparkSession \
+    .builder \
+    .master("spark://6a125a083996:7077") \
+    .appName("first spark") \
+    .getOrCreate()
 
-df = sc.read \
+df = spark.read \
     .parquet("/opt/spark-data/yellow_tripdata_2021-01.parquet")
 # Displays the content of the DataFrame to stdout
 # df.show()

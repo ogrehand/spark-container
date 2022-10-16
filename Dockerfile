@@ -5,7 +5,7 @@ FROM openjdk:17.0.2-slim-buster as builder
 # Add Dependencies for PySpark
 RUN apt-get update &&\
     apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates python3 python3-pip &&\
-    pip3 install pyspark
+    pip3 install pyspark requests
 
 RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 1
 
@@ -22,7 +22,6 @@ RUN mkdir -p /opt/spark \
 WORKDIR /opt/spark
 
 COPY --chown=spark:spark spark-3.3.0-bin-hadoop3.tgz /opt/spark
-COPY start-spark.sh /opt/spark
 
 RUN tar zxvf spark-3.3.0-bin-hadoop3.tgz &&\
     rm -rf spark-3.3.0-bin-hadoop3.tgz
