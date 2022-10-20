@@ -4,24 +4,22 @@ from pyspark.sql.functions import split, size, concat, lit
 import requests
 
 
-def check_robots(url: str) ->None :
+def check_robots(url):
+    file = requests.get("https://"+url['value']+"/robots.txt")
+    with open(f'/opt/spark-data/robots/robot_{url["value"]}.txt','wb') as f:
+        f.write(file.content)
     
-
 
 spark = SparkSession \
     .builder \
-    .master("spark://bfb71c2164a3:7077") \
-    .appName("Python Spark SQL basic example") \
+    .master("spark://0b8e871de997:7077") \
+    .appName("Python robots.txt scrapper") \
     .getOrCreate()
 
 
-links = spark.read.text("/opt/spark-data/link.txt")
-splitted = split(links['value'],'/')
-links = links.withColumn("file_name", concat(splitted[size(splitted)-1],lit('.csv')))
+links = spark.read.text("/opt/spark-data/link-robot.txt")
 links.show()
 
 links_rdd = links.rdd
-print(links_rdd.count())
-print(links_rdd.take(1))
-print(links_rdd.foreach(check_robots))
+links_rdd.foreach(check_robots)
 # links_rdd.collect()
